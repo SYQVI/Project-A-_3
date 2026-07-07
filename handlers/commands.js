@@ -1,5 +1,5 @@
 const { REST, Routes, SlashCommandBuilder } = require("discord.js");
-const config = require("../config.json");
+const config = require('../config');
 
 module.exports = async (client) => {
   const commands = [
