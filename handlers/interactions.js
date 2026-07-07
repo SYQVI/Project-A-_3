@@ -1,5 +1,4 @@
 client.on("interactionCreate", async (interaction) => {
-  console.log("Interaction received:", interaction.type, interaction.commandName);
 const {
   EmbedBuilder,
   ActionRowBuilder,
