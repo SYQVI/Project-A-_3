@@ -9,7 +9,7 @@ const {
 
 const fs = require("fs");
 const path = require("path");
-const config = require("../config.json");
+const config = require('../config');
 const { mainEmbed, rulesMenu } = require("../utils/rulesEmbed");
 
 const rulesDataPath = path.join(__dirname, "..", "data", "rules.json");
