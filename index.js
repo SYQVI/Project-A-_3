@@ -15,7 +15,10 @@ if (!fs.existsSync(rulesDataPath)) {
 let data = require(rulesDataPath);
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages
+  ]
 });
 
 require("./handlers/commands")(client);
