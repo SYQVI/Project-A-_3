@@ -1,7 +1,7 @@
-{
-  "token": "MTUyMzc1NTcyNTgwNzk0MzczMQ.GBTDkk.0bBxkq9RrwkW_Uq5ufrkh4QCreeCXb6PpYzX8g",
-  "clientId": "1523755725807943731",
-  "guildId": "1523692223601053847",
-  "adminRoleId": "1523692857657917440",
-  "rulesImage": ""
-}
+module.exports = {
+  token: process.env.TOKEN,
+  clientId: process.env.CLIENT_ID,
+  guildId: process.env.GUILD_ID,
+  adminRoleId: process.env.ADMIN_ROLE_ID,
+  rulesImage: ""
+};
