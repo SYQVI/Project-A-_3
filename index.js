@@ -25,4 +25,7 @@ client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
+const http = require('http');
+http.createServer((req, res) => res.end('Bot is running!')).listen(process.env.PORT || 3000);
+
 client.login(config.token);
