@@ -23,7 +23,7 @@ function mainEmbed() {
       "🔹 الالتزام بالقوانين يحافظ على النظام ويجنبك العقوبات.\n\n" +
       "💡 تذكير: قراءة القوانين تعني موافقتك على جميع الشروط والأحكام."
     )
-    .setImage(config.rulesImage)
+    .setImage(config.rulesImage || null)
     .setColor(0xAA00FF)
     .setFooter({ text: "• Powered By Project A • f52k"})
     .setTimestamp();
