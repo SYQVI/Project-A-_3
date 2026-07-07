@@ -25,7 +25,7 @@ function mainEmbed() {
     )
     .setImage(config.rulesImage)
     .setColor(0xAA00FF)
-    .setFooter({ text: "• Powered By Thailand Codes • .kn3."})
+    .setFooter({ text: "• Powered By Project A • f52k"})
     .setTimestamp();
 }
 
