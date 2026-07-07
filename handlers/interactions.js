@@ -1,4 +1,3 @@
-client.on("interactionCreate", async (interaction) => {
 const {
   EmbedBuilder,
   ActionRowBuilder,
@@ -19,18 +18,9 @@ function loadData() {
   if (!fs.existsSync(rulesDataPath)) {
     fs.writeFileSync(
       rulesDataPath,
-      JSON.stringify(
-        {
-          rules: [],
-          rulesMessageId: null,
-          rulesChannelId: null
-        },
-        null,
-        2
-      )
+      JSON.stringify({ rules: [], rulesMessageId: null, rulesChannelId: null }, null, 2)
     );
   }
-
   delete require.cache[require.resolve(rulesDataPath)];
   return require(rulesDataPath);
 }
@@ -44,26 +34,19 @@ module.exports = (client) => {
 
     if (interaction.isChatInputCommand() && interaction.commandName === "setuprules") {
       const data = loadData();
-
       const msg = await interaction.channel.send({
         embeds: [mainEmbed()],
         components: [rulesMenu(data.rules)]
       });
-
       data.rulesMessageId = msg.id;
       data.rulesChannelId = msg.channel.id;
       saveData(data);
-
-      return interaction.reply({
-        content: "Tln Sys : تم رسلتلك اللوحة",
-        ephemeral: true
-      });
+      return interaction.reply({ content: "Tln Sys : تم رسلتلك اللوحة", flags: 64 });
     }
 
-    /* ---------- /adminsystem ---------- */
     if (interaction.isChatInputCommand() && interaction.commandName === "adminsystem") {
       if (!interaction.member.roles.cache.has(config.adminRoleId))
-        return interaction.reply({ content: "Tln Sys : ليس لديك صلاحيات ، طيييير", ephemeral: true });
+        return interaction.reply({ content: "Tln Sys : ليس لديك صلاحيات ، طيييير", flags: 64 });
 
       const row = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
@@ -75,180 +58,99 @@ module.exports = (client) => {
             { label: "تعديل قانون", value: "edit" }
           )
       );
-
-      return interaction.reply({ components: [row], ephemeral: true });
+      return interaction.reply({ components: [row], flags: 64 });
     }
 
-    /* ---------- عرض قانون ---------- */
     if (interaction.isStringSelectMenu() && interaction.customId === "rules_select") {
       const data = loadData();
-      if (interaction.values[0] === "none") return;
-
+      if (interaction.values[0] === "none") return interaction.deferUpdate();
       const rule = data.rules[interaction.values[0]];
       if (!rule) return;
-
       const embed = new EmbedBuilder()
         .setTitle(rule.name)
         .setDescription(rule.text)
-        .setImage(rule.image)
         .setColor(0xAA00FF);
-
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      if (rule.image) embed.setImage(rule.image);
+      return interaction.reply({ embeds: [embed], flags: 64 });
     }
 
     if (interaction.isStringSelectMenu() && interaction.customId === "admin_menu") {
       const data = loadData();
       const choice = interaction.values[0];
 
-
       if (choice === "add") {
-        const modal = new ModalBuilder()
-          .setCustomId("add_rule")
-          .setTitle("إضافة قانون");
-
+        const modal = new ModalBuilder().setCustomId("add_rule").setTitle("إضافة قانون");
         modal.addComponents(
-          new ActionRowBuilder().addComponents(
-            new TextInputBuilder()
-              .setCustomId("name")
-              .setLabel("اسم القانون")
-              .setStyle(TextInputStyle.Short)
-              .setRequired(true)
-          ),
-          new ActionRowBuilder().addComponents(
-            new TextInputBuilder()
-              .setCustomId("text")
-              .setLabel("القانون المُضاف")
-              .setStyle(TextInputStyle.Paragraph)
-              .setRequired(true)
-          ),
-          new ActionRowBuilder().addComponents(
-            new TextInputBuilder()
-              .setCustomId("image")
-              .setLabel("لينك الصورة")
-              .setStyle(TextInputStyle.Short)
-              .setRequired(true)
-          )
+          new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("name").setLabel("اسم القانون").setStyle(TextInputStyle.Short).setRequired(true)),
+          new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("text").setLabel("القانون المُضاف").setStyle(TextInputStyle.Paragraph).setRequired(true)),
+          new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("image").setLabel("لينك الصورة (اختياري)").setStyle(TextInputStyle.Short).setRequired(false))
         );
-
         return interaction.showModal(modal);
       }
 
-      /* حذف */
       if (choice === "remove") {
-        if (!data.rules.length)
-          return interaction.reply({ content: "Tln Sys : لايوجد قوانين", ephemeral: true });
-
+        if (!data.rules.length) return interaction.reply({ content: "Tln Sys : لايوجد قوانين", flags: 64 });
         const row = new ActionRowBuilder().addComponents(
-          new StringSelectMenuBuilder()
-            .setCustomId("remove_rule")
-            .setPlaceholder("اختار القانون المراد حذفه")
-            .addOptions(
-              data.rules.map((r, i) => ({
-                label: r.name,
-                value: String(i)
-              }))
-            )
+          new StringSelectMenuBuilder().setCustomId("remove_rule").setPlaceholder("اختار القانون المراد حذفه")
+            .addOptions(data.rules.map((r, i) => ({ label: r.name, value: String(i) })))
         );
-
-        return interaction.reply({ components: [row], ephemeral: true });
+        return interaction.reply({ components: [row], flags: 64 });
       }
 
-
       if (choice === "edit") {
-        if (!data.rules.length)
-          return interaction.reply({ content: "Tln Sys : لايوجد قوانين", ephemeral: true });
-
+        if (!data.rules.length) return interaction.reply({ content: "Tln Sys : لايوجد قوانين", flags: 64 });
         const row = new ActionRowBuilder().addComponents(
-          new StringSelectMenuBuilder()
-            .setCustomId("edit_rule")
-            .setPlaceholder("اختار القانون المراد تعديله")
-            .addOptions(
-              data.rules.map((r, i) => ({
-                label: r.name,
-                value: String(i)
-              }))
-            )
+          new StringSelectMenuBuilder().setCustomId("edit_rule").setPlaceholder("اختار القانون المراد تعديله")
+            .addOptions(data.rules.map((r, i) => ({ label: r.name, value: String(i) })))
         );
-
-        return interaction.reply({ components: [row], ephemeral: true });
+        return interaction.reply({ components: [row], flags: 64 });
       }
     }
 
     if (interaction.isModalSubmit() && interaction.customId === "add_rule") {
       const data = loadData();
-
       data.rules.push({
         name: interaction.fields.getTextInputValue("name"),
         text: interaction.fields.getTextInputValue("text"),
-        image: interaction.fields.getTextInputValue("image")
+        image: interaction.fields.getTextInputValue("image") || null
       });
-
       saveData(data);
       await refreshRules(interaction);
-
-      return interaction.reply({ content: "Tln Sys : تم إضافة القانون", ephemeral: true });
+      return interaction.reply({ content: "Tln Sys : تم إضافة القانون ✅", flags: 64 });
     }
 
-    /* ---------- حذف قانون ---------- */
     if (interaction.isStringSelectMenu() && interaction.customId === "remove_rule") {
       const data = loadData();
       data.rules.splice(interaction.values[0], 1);
       saveData(data);
       await refreshRules(interaction);
-
-      return interaction.reply({ content: "Tln Sys : تم حذف القانون", ephemeral: true });
+      return interaction.reply({ content: "Tln Sys : تم حذف القانون ✅", flags: 64 });
     }
 
     if (interaction.isStringSelectMenu() && interaction.customId === "edit_rule") {
       const data = loadData();
       const index = interaction.values[0];
       const rule = data.rules[index];
-
-      const modal = new ModalBuilder()
-        .setCustomId(`edit_rule_${index}`)
-        .setTitle("تعديل قانون");
-
+      const modal = new ModalBuilder().setCustomId(`edit_rule_${index}`).setTitle("تعديل قانون");
       modal.addComponents(
-        new ActionRowBuilder().addComponents(
-          new TextInputBuilder()
-            .setCustomId("name")
-            .setLabel("اسم القانون")
-            .setStyle(TextInputStyle.Short)
-            .setValue(rule.name)
-        ),
-        new ActionRowBuilder().addComponents(
-          new TextInputBuilder()
-            .setCustomId("text")
-            .setLabel("القانون بعد التعديل")
-            .setStyle(TextInputStyle.Paragraph)
-            .setValue(rule.text)
-        ),
-        new ActionRowBuilder().addComponents(
-          new TextInputBuilder()
-            .setCustomId("image")
-            .setLabel("لينك الصورة")
-            .setStyle(TextInputStyle.Short)
-            .setValue(rule.image)
-        )
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("name").setLabel("اسم القانون").setStyle(TextInputStyle.Short).setValue(rule.name)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("text").setLabel("القانون بعد التعديل").setStyle(TextInputStyle.Paragraph).setValue(rule.text)),
+        new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId("image").setLabel("لينك الصورة").setStyle(TextInputStyle.Short).setValue(rule.image || ""))
       );
-
       return interaction.showModal(modal);
     }
 
     if (interaction.isModalSubmit() && interaction.customId.startsWith("edit_rule_")) {
       const data = loadData();
       const index = interaction.customId.split("_")[2];
-
       data.rules[index] = {
         name: interaction.fields.getTextInputValue("name"),
         text: interaction.fields.getTextInputValue("text"),
-        image: interaction.fields.getTextInputValue("image")
+        image: interaction.fields.getTextInputValue("image") || null
       };
-
       saveData(data);
       await refreshRules(interaction);
-
-      return interaction.reply({ content: "Tln Sys : لقد تم تعديل القانون", ephemeral: true });
+      return interaction.reply({ content: "Tln Sys : لقد تم تعديل القانون ✅", flags: 64 });
     }
   });
 };
@@ -256,12 +158,11 @@ module.exports = (client) => {
 async function refreshRules(interaction) {
   const data = loadData();
   if (!data.rulesMessageId || !data.rulesChannelId) return;
-
-  const channel = await interaction.client.channels.fetch(data.rulesChannelId);
-  const message = await channel.messages.fetch(data.rulesMessageId);
-
-  await message.edit({
-    embeds: [mainEmbed()],
-    components: [rulesMenu(data.rules)]
-  });
+  try {
+    const channel = await interaction.client.channels.fetch(data.rulesChannelId);
+    const message = await channel.messages.fetch(data.rulesMessageId);
+    await message.edit({ embeds: [mainEmbed()], components: [rulesMenu(data.rules)] });
+  } catch(e) {
+    console.error("refreshRules error:", e.message);
+  }
 }
