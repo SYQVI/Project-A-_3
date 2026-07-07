@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require("discord.js");
-const config = require("./config.json");
+const config = require('./config.js');
 const fs = require("fs");
 const path = require("path"); 
 
