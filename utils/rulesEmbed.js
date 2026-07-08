@@ -15,16 +15,16 @@ const data = JSON.parse(fs.readFileSync(rulesDataPath, "utf8"));
 
 function mainEmbed() {
   return new EmbedBuilder()
-    .setTitle("📜 ThailandCodes Rules")
+    .setTitle("📜 Project A Rules")
     .setDescription(
-      "**مرحباً بك في سيرفر ThailandCodes!**\n\n" +
+      "**مرحباً بك في سيرفر Project A!**\n\n" +
       "قبل أن تبدأ بالمشاركة في القنوات، يرجى قراءة القوانين بعناية.\n\n" +
       "🔹 الضغط على زر أو القائمة أدناه يتيح لك الاطلاع على كل القوانين.\n" +
       "🔹 الالتزام بالقوانين يحافظ على النظام ويجنبك العقوبات.\n\n" +
       "💡 تذكير: قراءة القوانين تعني موافقتك على جميع الشروط والأحكام."
     )
     .setImage(config.rulesImage || null)
-    .setColor(0xAA00FF)
+    .setColor(030202)
     .setFooter({ text: "• Powered By Project A • f52k"})
     .setTimestamp();
 }
